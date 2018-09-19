@@ -23,7 +23,7 @@ Please visit [here](http://www.loginradius.com/) for more information.
 
 ## Documentation
 
-* [Configuration](https://docs.loginradius.com/api/v2/sdk-libraries/golang) - Everything you need to begin using the LoginRadius SDK.
+* [Configuration](https://docs.loginradius.com/api/v2/deployment/sdk-libraries/golang-library) - Everything you need to begin using the LoginRadius SDK.
 
 
 

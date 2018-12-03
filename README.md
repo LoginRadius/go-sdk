@@ -36,12 +36,12 @@ Go wrapper for the LoginRadius API. Get social graph information and send messag
 Run the following command:
 
 ``` 
-go get -u github.com/loginradius/go-sdk
+go get -u github.com/loginradius/go-sdk/sdk
 ```
 
 And then on any code that uses the sdk, include the following line as an import:
 ```
-import "github.com/loginradius/loginradiusgo"
+import "github.com/loginradius/go-sdk/sdk"
 ```
 
 This package also uses pbkdf2 encryption from the Golang crypto libraries. To add them, run the following command:

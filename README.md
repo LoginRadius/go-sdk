@@ -18,54 +18,40 @@ Please visit [here](http://www.loginradius.com/) for more information.
 
 ## Contents ##
 
-* [Demo](https://github.com/LoginRadius/go-sdk/tree/master/demo): It contains a demo of LoginRadius Flow.
-
+* [Demo](https://github.com/LoginRadius/go-sdk/tree/master/demo) - contains a demo of LoginRadius user auth workflow.
 
 ## Documentation
 
 * [Configuration](https://docs.loginradius.com/api/v2/deployment/sdk-libraries/golang-library) - Everything you need to begin using the LoginRadius SDK.
 
-
-
-# LoginRadius
-
-Go wrapper for the LoginRadius API. Get social graph information and send messages using LoginRadius' many social network clients!
-
 ## Installation
 
-Run the following command:
+To install, run:
+`go get github.com/loginradius/go-sdk`
 
-``` 
-go get -u github.com/loginradius/go-sdk/sdk
-```
+Import the package:
 
-And then on any code that uses the sdk, include the following line as an import:
-```
-import "github.com/loginradius/go-sdk/sdk"
-```
+`import "github.com/loginradius/go-sdk"`
 
-This package also uses pbkdf2 encryption from the Golang crypto libraries. To add them, run the following command:
-```
-go get -u golang.org/x/crypto/pbkdf2
-```
+Install all package dependencies by running `go get ./...` in the root folder of this SDK.  
 
 ## Usage
 
 Take a peek:
+
+Before making any API calls, the LoginRadius API client must be initialized with your Loginradius API key and API secret.
+
+Sample code:
+
 ```
-type LoginStruct struct {
-    Email string
-    Password string
+cfg := lr.Config{
+    ApiKey:    <your API key>,
+    ApiSecret: <your API secret>,
 }
 
-func GetAccessToken() string {
-    loginradius.SetLoginRadiusEnv("MyAPIKey", "MyAPISecret", "https://api.loginradius.com")
-    login := LoginStruct{"example@example.com", "password"}
-    sessionObj, err := loginradius.PostAuthLoginByEmail("", "", "", "", "", login)
-    if err != nil {
-        // handle the error
-    }
-    return sessionObj.AccessToken
+lrclient, err := lr.NewLoginradius(&cfg)
+
+if err != nil {
+    // handle error
 }
 ```
-		

@@ -97,7 +97,7 @@ func TestPutAccountAddPermissionsToRole(t *testing.T) {
 
 	data, err := lrjson.DynamicUnmarshal(res.Body)
 	included := false
-	for k, _ := range data["Permissions"].(map[string]interface{}) {
+	for k := range data["Permissions"].(map[string]interface{}) {
 		if k == permissionName {
 			included = true
 		}
@@ -206,7 +206,7 @@ func TestDeleteRolesAccountRemovePermissions(t *testing.T) {
 
 	data, err := lrjson.DynamicUnmarshal(res.Body)
 	included := false
-	for k, _ := range data["Permissions"].(map[string]interface{}) {
+	for k := range data["Permissions"].(map[string]interface{}) {
 		if k == permissionName {
 			included = true
 		}

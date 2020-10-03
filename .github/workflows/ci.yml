@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '1.15', '1.14' ]
+    name: Build
+    steps:
+      - name: Setup Go version ${{ matrix.go }}
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build project
+        run: |
+          set -e -x
+          export UPSTREAM=LoginRadius
+          export REPO=`basename $GITHUB_WORKSPACE`
+          export GOPATH=/home/runner/go
+          mkdir -p $GOPATH/src/github.com/$UPSTREAM
+          ln -s $GITHUB_WORKSPACE $GOPATH/src/github.com/$UPSTREAM/$REPO
+          cd $GOPATH/src/github.com/$UPSTREAM/$REPO
+          go get -v ./...
+          #go test -v ./...
+          go build -v ./...

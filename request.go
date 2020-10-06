@@ -191,12 +191,11 @@ func (lr Loginradius) NewDeleteReq(path string, body ...interface{}) *httprutils
 			Headers: httprutils.URLEncodedHeader,
 			Body:    encoded,
 		}
-	} else {
-		return &httprutils.Request{
-			Method:  httprutils.Delete,
-			URL:     lr.Domain + path,
-			Headers: httprutils.URLEncodedHeader,
-		}
+	}
+	return &httprutils.Request{
+		Method:  httprutils.Delete,
+		URL:     lr.Domain + path,
+		Headers: httprutils.URLEncodedHeader,
 	}
 }
 

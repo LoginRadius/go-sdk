@@ -357,27 +357,7 @@ func (lr Loginradius) GetSocialStatusPost(queries interface{}) (*httprutils.Resp
 	return response, err
 }
 
-// GetSocialUserProfile is used to get social profile data from the user’s social account after authentication.
 
-// Supported Providers: All
-
-// Required query parameters: access_token - string
-
-// Documentation: https://www.loginradius.com/docs/api/v2/customer-identity-api/social-login/user-profile
-func (lr Loginradius) GetSocialUserProfile() (*httprutils.Response, error) {
-	if lr.Client.Context.Token == "" {
-		errMsg := "Must initialize Loginradius with access token for this API call."
-		err := lrerror.New("MissingTokenErr", errMsg, errors.New(errMsg))
-		return nil, err
-	}
-
-	req := lr.Client.NewGetReq("/api/v2/userprofile", map[string]string{
-		"access_token": lr.Client.Context.Token,
-	})
-
-	resp, err := httprutils.TimeoutClient.Send(*req)
-	return resp, err
-}
 
 // GetSocialPage is used to get the page data from the user’s social account.
 // Supported Providers: Facebook, LinkedIn

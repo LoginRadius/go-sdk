@@ -422,32 +422,7 @@ func TestGetSocialStatusPost(t *testing.T) {
 	}
 }
 
-// To run this test, comment out t.SkipNow(), manually create user, link social account and set token
-func TestGetSocialUserProfile(t *testing.T) {
-	t.SkipNow()
-	SetTestEnv()
-	cfg := lr.Config{
-		ApiKey:    os.Getenv("APIKEY"),
-		ApiSecret: os.Getenv("APISECRET"),
-	}
 
-	// Manually fill LoginRadius token here
-	lrclient, err := lr.NewLoginradius(&cfg, map[string]string{"token": "74693104-56e0-44e3-b473-bdb73da77051"})
-
-	if err != nil {
-		t.Errorf("Error initiating lrclient")
-	}
-
-	resp, err := lrsocial.Loginradius(lrsocial.Loginradius{lrclient}).GetSocialUserProfile()
-	if err != nil {
-		t.Errorf("Error calling GetSocialUserProfile: %+v", err)
-	}
-
-	profile, err := lrjson.DynamicUnmarshal(resp.Body)
-	if err != nil || profile["Uid"].(string) == "" {
-		t.Errorf("Error returned from GetSocialUserProfile: %+v", err)
-	}
-}
 
 // To run this test, comment out t.SkipNow(), manually create user, link social account and set token
 func TestGetSocialPage(t *testing.T) {

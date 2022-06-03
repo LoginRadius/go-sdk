@@ -137,9 +137,17 @@ func (c *Client) Send(request Request) (*Response, error) {
 	return BuildResponse(res)
 }
 
+
+var tr = &http.Transport{
+	MaxIdleConns:       100,
+	MaxConnsPerHost:    100,
+	MaxIdleConnsPerHost: 100,
+}
+
 // Custom client with time out after 8 seconds
 var NetClient = &http.Client{
 	Timeout: time.Second * 8,
+	Transport: tr,
 }
 
 var TimeoutClient = &Client{HTTPClient: NetClient}

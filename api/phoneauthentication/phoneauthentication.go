@@ -2,7 +2,6 @@ package phoneauthentication
 
 import (
 	"github.com/LoginRadius/go-sdk/httprutils"
-	"github.com/LoginRadius/go-sdk/internal/sott"
 	lrvalidate "github.com/LoginRadius/go-sdk/internal/validate"
 )
 
@@ -144,8 +143,9 @@ func (lr Loginradius) PostPhoneResendVerificationOTPByToken(body interface{}, qu
 // Required body parameters: email, password, and other form fields configured for your LoginRadius app
 
 // Optional body parameters: other optional profile fields for your user
-func (lr Loginradius) PostPhoneUserRegistrationBySMS(body interface{}, queries ...interface{}) (*httprutils.Response, error) {
-	sott := sott.Generate(lr.Client.Context.ApiKey, lr.Client.Context.ApiSecret)
+// Required  parameter: sott
+
+func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string,body interface{}, queries ...interface{}) (*httprutils.Response, error) {
 	queryParams := map[string]string{}
 	for _, arg := range queries {
 		allowedQueries := map[string]bool{

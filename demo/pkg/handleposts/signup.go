@@ -9,6 +9,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
+	"github.com/LoginRadius/go-sdk/internal/sott"
 	lrauthentication "github.com/LoginRadius/go-sdk/api/authentication"
 	"github.com/LoginRadius/go-sdk/lrerror"
 )
@@ -43,8 +44,13 @@ func Signup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &user)
 	verificationURL := r.URL.Query().Get("verification_url")
+	startTime:=""
+	endTime:=""
+	timeDifference:=""
+	sott := sott.Generate(lrclient.Context.ApiKey, lrclient.Context.ApiSecret,timeDifference,startTime,endTime)
+
 	res, err := lrauthentication.Loginradius(lrauthentication.Loginradius{lrclient}).PostAuthUserRegistrationByEmail(
-		user,
+		sott,user,
 		map[string]string{"verificationurl": verificationURL},
 	)
 	if err != nil {

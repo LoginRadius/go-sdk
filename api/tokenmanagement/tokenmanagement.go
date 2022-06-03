@@ -118,3 +118,4 @@ func (lr Loginradius) GetRefreshToken(queries ...interface{}) (*httprutils.Respo
 	res, err := httprutils.TimeoutClient.Send(*req)
 	return res, err
 }
+

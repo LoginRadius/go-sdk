@@ -2,7 +2,6 @@ package lrauthentication
 
 import (
 	"github.com/LoginRadius/go-sdk/httprutils"
-	"github.com/LoginRadius/go-sdk/internal/sott"
 	lrvalidate "github.com/LoginRadius/go-sdk/internal/validate"
 )
 
@@ -71,10 +70,10 @@ func (lr Loginradius) PostAuthForgotPassword(body interface{}, queries interface
 // Documentation https://www.loginradius.com/docs/api/v2/customer-identity-api/authentication/auth-user-registration-by-email
 
 // Required post parameter: email - array(Check docs for more info); password: string
-
+// Required  parameter: sott
 // Pass data in struct lrbody.RegistrationUser as body to help ensure parameters satisfy API requirements
-func (lr Loginradius) PostAuthUserRegistrationByEmail(body interface{}, queries ...interface{}) (*httprutils.Response, error) {
-	sott := sott.Generate(lr.Client.Context.ApiKey, lr.Client.Context.ApiSecret)
+func (lr Loginradius) PostAuthUserRegistrationByEmail(sott string,body interface{}, queries ...interface{}) (*httprutils.Response, error) {
+	
 	queryParams := map[string]string{}
 	for _, arg := range queries {
 		allowedQueries := map[string]bool{

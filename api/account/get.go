@@ -129,3 +129,40 @@ func (lr Loginradius) GetManageAccountPassword(uid string) (*httprutils.Response
 	response, err := httprutils.TimeoutClient.Send(*request)
 	return response, err
 }
+
+// GetRefreshAccessTokenByRefreshToken is used to refresh the access token using the refresh token.
+
+// Documentation: https://www.loginradius.com/docs/api/v2/customer-identity-api/refresh-token/refresh-access-token-by-refresh-token
+
+// Required template parameter: string representing refreshToken
+
+func (lr Loginradius) GetRefreshAccessTokenByRefreshToken(queries interface{}) (*httprutils.Response, error) {
+	allowedQueries := map[string]bool{"refresh_token": true}
+	validatedQueries, err := lrvalidate.Validate(allowedQueries, queries)
+	if err != nil {
+		return nil, err
+	}
+	request := lr.Client.NewGetReq("/identity/v2/manage/account/access_token/refresh", validatedQueries)
+	lr.Client.AddApiCredentialsToReqHeader(request)
+	response, err := httprutils.TimeoutClient.Send(*request)
+	return response, err
+}
+
+// GetRevokeRefreshToken is used to revoke the refresh token .
+
+// Documentation: https://www.loginradius.com/docs/api/v2/customer-identity-api/refresh-token/revoke-refresh-token/
+
+// Required template parameter: string representing refreshToken
+
+func (lr Loginradius) GetRevokeRefreshToken(queries interface{}) (*httprutils.Response, error) {
+	allowedQueries := map[string]bool{"refresh_token": true}
+	validatedQueries, err := lrvalidate.Validate(allowedQueries, queries)
+	if err != nil {
+		return nil, err
+	}
+	request := lr.Client.NewGetReq("/identity/v2/manage/account/access_token/refresh/revoke", validatedQueries)
+	lr.Client.AddApiCredentialsToReqHeader(request)
+	response, err := httprutils.TimeoutClient.Send(*request)
+	return response, err
+}
+

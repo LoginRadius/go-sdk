@@ -13,29 +13,46 @@ import (
 	"log"
 	"strings"
 	"time"
-
+	"strconv"
 	"github.com/LoginRadius/go-sdk/lrerror"
 	"golang.org/x/crypto/pbkdf2"
 )
 
 // Generates a SOTT through the methods described here:
 // https://docs.loginradius.com/api/v2/user-registration/sott
-func Generate(key string, secret string) string {
-	plainText := generatePlainText(key)
+func Generate(key string, secret string, timeDifference string, startTime string, endTime string) string {
+	var plainText = ""
+	if startTime != "" && endTime != "" {
+		plainText = startTime + "#" + key + "#" + endTime
+
+	} else if timeDifference != ""  {
+		plainText = generatePlainText(key, timeDifference)
+	}
+
+	if(plainText==""){
+		plainText=generatePlainText(key,"10")
+	}
+	
 	tempToken := encrypt(plainText, secret)
 	token := strings.Replace(tempToken, "-", "+", -1)
 	readyToken := strings.Replace(token, "_", "/", -1)
 	hash := getMD5Hash(readyToken)
 	return readyToken + "*" + hash
+	
 }
 
-func generatePlainText(k string) string {
+func generatePlainText(k string,timeDifference string) string {
+	timeDifferenceData, err := strconv.Atoi(timeDifference)
+	if err !=nil{
+		timeDifferenceData=10
+	}
 	key := k
-	initTime := time.Now().UTC().Add(time.Duration(-10) * time.Minute)
-	endTime := time.Now().UTC().Add(time.Duration(10) * time.Minute)
+	initTime := time.Now().UTC().Add(time.Duration(0) * time.Minute)
+	endTime := time.Now().UTC().Add(time.Duration(timeDifferenceData) * time.Minute)
 	initTimestamp := fmt.Sprintf("%s %d%s", initTime.Format("2006/1/2"), initTime.Hour(), initTime.Format(":4:5"))
 	endTimestamp := fmt.Sprintf("%s %d%s", endTime.Format("2006/1/2"), endTime.Hour(), endTime.Format(":4:5"))
 	retTime := initTimestamp + "#" + key + "#" + endTimestamp
+
 	return retTime
 }
 

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
+	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 	"github.com/LoginRadius/go-sdk/demo/pkg/handledeletes"
@@ -59,6 +59,6 @@ func main() {
 	static := httprouter.New()
 	static.ServeFiles("/*filepath", http.Dir(filepath.Join(cwd, "../../ui/assets")))
 	router.NotFound = static
-
+	fmt.Println("Listening on port http://localhost:3000/")
 	http.ListenAndServe(":3000", router)
 }

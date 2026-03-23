@@ -32,7 +32,7 @@ func (lr Loginradius) PostCustomObjectCreateByUID(uid string, queries interface{
 	}
 
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -57,7 +57,7 @@ func (lr Loginradius) PostCustomObjectCreateByToken(queries interface{}, body in
 		return nil, err
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -79,7 +79,7 @@ func (lr Loginradius) GetCustomObjectByObjectRecordIDAndUID(uid, objectRecordID 
 
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/"+uid+"/customobject/"+objectRecordID, validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -103,7 +103,7 @@ func (lr Loginradius) GetCustomObjectByObjectRecordIDAndToken(objectRecordID str
 	if err != nil {
 		return nil, err
 	}
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -124,7 +124,7 @@ func (lr Loginradius) GetCustomObjectByToken(queries interface{}) (*httprutils.R
 		return nil, err
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -144,7 +144,7 @@ func (lr Loginradius) GetCustomObjectByUID(uid string, queries interface{}) (*ht
 
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/"+uid+"/customobject/", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -172,7 +172,7 @@ func (lr Loginradius) PutCustomObjectUpdateByUID(uid, objectrecordid string, que
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -199,7 +199,7 @@ func (lr Loginradius) PutCustomObjectUpdateByToken(objectrecordid string, querie
 		return nil, err
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -222,7 +222,7 @@ func (lr Loginradius) DeleteCustomObjectByObjectRecordIDAndUID(uid, objectRecord
 	req.QueryParams = validatedQueries
 	lr.Client.AddApiCredentialsToReqHeader(req)
 	req.Headers["content-Type"] = "application/json"
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -250,6 +250,6 @@ func (lr Loginradius) DeleteCustomObjectByObjectRecordIDAndToken(objectRecordId 
 	req.QueryParams = validatedQueries
 	req.Headers["content-Type"] = "application/json"
 	lr.Client.NormalizeApiKey(req)
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }

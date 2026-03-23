@@ -34,7 +34,7 @@ func (lr Loginradius) GetMFAValidateAccessToken(queries ...interface{}) (*httpru
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -49,7 +49,7 @@ func (lr Loginradius) GetMFABackUpCodeByAccessToken() (*httprutils.Response, err
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -64,7 +64,7 @@ func (lr Loginradius) GetMFAResetBackUpCodeByAccessToken() (*httprutils.Response
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -93,7 +93,7 @@ func (lr Loginradius) GetMFABackUpCodeByUID(queries interface{}) (*httprutils.Re
 
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/2fa/backupcode", queryParams)
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -119,7 +119,7 @@ func (lr Loginradius) GetMFAResetBackUpCodeByUID(queries interface{}) (*httpruti
 
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/2fa/backupcode/reset", queryParams)
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -144,6 +144,6 @@ func (lr Loginradius) GetMFAReAuthenticate(queries ...interface{}) (*httprutils.
 		}
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

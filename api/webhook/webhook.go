@@ -19,7 +19,7 @@ func (lr Loginradius) PostWebhookSubscribe(body interface{}) (*httprutils.Respon
 	}
 	lr.Client.NormalizeApiKey(req)
 	req.QueryParams["apisecret"] = lr.Client.Context.ApiSecret
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -30,7 +30,7 @@ func (lr Loginradius) GetWebhookTest() (*httprutils.Response, error) {
 	req := lr.Client.NewGetReq("/api/v2/webhook/test")
 	lr.Client.NormalizeApiKey(req)
 	req.QueryParams["apisecret"] = lr.Client.Context.ApiSecret
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -47,7 +47,7 @@ func (lr Loginradius) GetWebhookSubscribedURLs(queries interface{}) (*httprutils
 	validatedQueries["apisecret"] = lr.Client.Context.ApiSecret
 	req := lr.Client.NewGetReq("/api/v2/webhook", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -63,6 +63,6 @@ func (lr Loginradius) DeleteWebhookUnsubscribe(body interface{}) (*httprutils.Re
 		"apikey":    lr.Client.Context.ApiKey,
 	}
 	req.Headers = httprutils.JSONHeader
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

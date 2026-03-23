@@ -34,7 +34,7 @@ func (lr Loginradius) PostAuthAddEmail(body interface{}, queries ...interface{})
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -61,7 +61,7 @@ func (lr Loginradius) PostAuthForgotPassword(body interface{}, queries interface
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -92,7 +92,7 @@ func (lr Loginradius) PostAuthUserRegistrationByEmail(sott string,body interface
 	request, err := lr.Client.NewPostReq("/identity/v2/auth/register", body, queryParams)
 
 	request.Headers["X-LoginRadius-Sott"] = sott
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -121,7 +121,7 @@ func (lr Loginradius) PostAuthLoginByEmail(body interface{}, queries ...interfac
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -148,6 +148,6 @@ func (lr Loginradius) PostAuthLoginByUsername(body interface{}, queries ...inter
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

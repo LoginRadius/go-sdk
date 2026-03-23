@@ -22,7 +22,7 @@ func (lr Loginradius) GetSocialAccessToken(requestToken string) (*httprutils.Res
 		"secret": lr.Client.Context.ApiSecret,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -43,7 +43,7 @@ func (lr Loginradius) GetSocialTokenValidate() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -79,7 +79,7 @@ func (lr Loginradius) GetSocialTokenInvalidate(queries ...interface{}) (*httprut
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -104,7 +104,7 @@ func (lr Loginradius) GetSocialAlbum() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -129,7 +129,7 @@ func (lr Loginradius) GetSocialAudio() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -154,7 +154,7 @@ func (lr Loginradius) GetSocialCheckin() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -177,7 +177,7 @@ func (lr Loginradius) GetSocialCompany() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -205,7 +205,7 @@ func (lr Loginradius) GetSocialContact() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -226,7 +226,7 @@ func (lr Loginradius) GetSocialEvent() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -250,7 +250,7 @@ func (lr Loginradius) GetSocialFollowing() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -274,7 +274,7 @@ func (lr Loginradius) GetSocialGroup() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -297,7 +297,7 @@ func (lr Loginradius) GetSocialLike() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -320,7 +320,7 @@ func (lr Loginradius) GetSocialMention() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -353,7 +353,7 @@ func (lr Loginradius) GetSocialStatusPost(queries interface{}) (*httprutils.Resp
 
 	request := lr.Client.NewGetReq("/api/v2/status/js", validatedQueries)
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -378,7 +378,7 @@ func (lr Loginradius) GetSocialPage(pagename string) (*httprutils.Response, erro
 		"access_token": lr.Client.Context.Token, "pagename": pagename,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -402,7 +402,7 @@ func (lr Loginradius) GetSocialPhoto(albumid string) (*httprutils.Response, erro
 		"access_token": lr.Client.Context.Token, "albumid": albumid,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -426,7 +426,7 @@ func (lr Loginradius) GetSocialPost() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -450,7 +450,7 @@ func (lr Loginradius) GetSocialStatus() (*httprutils.Response, error) {
 		"access_token": lr.Client.Context.Token,
 	})
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -486,6 +486,6 @@ func (lr Loginradius) GetSocialVideo(queries ...interface{}) (*httprutils.Respon
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }

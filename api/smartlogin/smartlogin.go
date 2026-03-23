@@ -20,7 +20,7 @@ func (lr Loginradius) GetSmartLoginByEmail(queries interface{}) (*httprutils.Res
 	}
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/smartlogin", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -38,7 +38,7 @@ func (lr Loginradius) GetSmartLoginByUsername(queries interface{}) (*httprutils.
 	}
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/smartlogin", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -53,7 +53,7 @@ func (lr Loginradius) GetSmartLoginPing(queries interface{}) (*httprutils.Respon
 	}
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/smartlogin/ping", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -71,6 +71,6 @@ func (lr Loginradius) GetSmartLoginVerifyToken(queries interface{}) (*httprutils
 	}
 	req := lr.Client.NewGetReq("/identity/v2/auth/email/smartlogin", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

@@ -13,7 +13,7 @@ func (lr Loginradius) GetConfiguration() (*httprutils.Response, error) {
 	req := lr.Client.NewGetReq("")
 	req.URL = "https://config.lrcontent.com/ciam/appinfo"
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -36,7 +36,7 @@ func (lr Loginradius) GetServerTime(queries ...interface{}) (*httprutils.Respons
 		}
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -57,7 +57,7 @@ func (lr Loginradius) GetGenerateSottAPI(queries ...interface{}) (*httprutils.Re
 		}
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -75,7 +75,7 @@ func (lr Loginradius) GetActiveSessionDetails() (*httprutils.Response, error) {
 	)
 	req.URL = "http://api.loginradius.com/api/v2/access_token/activesession"
 	delete(req.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 	// data := new(ActiveSession)
 	// req, reqErr := CreateRequest("GET", "http://api.loginradius.com/api/v2/access_token/activesession", "")

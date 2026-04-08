@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
 	lrauthentication "github.com/LoginRadius/go-sdk/api/authentication"
 	"github.com/LoginRadius/go-sdk/lrbody"
 	"github.com/LoginRadius/go-sdk/lrerror"
+	"github.com/julienschmidt/httprouter"
 )
 
 func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -44,7 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}

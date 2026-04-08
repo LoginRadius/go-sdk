@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
-	"github.com/LoginRadius/go-sdk/internal/sott"
 	lrauthentication "github.com/LoginRadius/go-sdk/api/authentication"
+	"github.com/LoginRadius/go-sdk/internal/sott"
 	"github.com/LoginRadius/go-sdk/lrerror"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Email struct {
@@ -44,13 +44,13 @@ func Signup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	b, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(b, &user)
 	verificationURL := r.URL.Query().Get("verification_url")
-	startTime:=""
-	endTime:=""
-	timeDifference:=""
-	sott := sott.Generate(lrclient.Context.ApiKey, lrclient.Context.ApiSecret,timeDifference,startTime,endTime)
+	startTime := ""
+	endTime := ""
+	timeDifference := ""
+	sott := sott.Generate(lrclient.Context.ApiKey, lrclient.Context.ApiSecret, timeDifference, startTime, endTime)
 
 	res, err := lrauthentication.Loginradius(lrauthentication.Loginradius{lrclient}).PostAuthUserRegistrationByEmail(
-		sott,user,
+		sott, user,
 		map[string]string{"verificationurl": verificationURL},
 	)
 	if err != nil {
@@ -61,7 +61,7 @@ func Signup(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}

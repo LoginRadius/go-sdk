@@ -145,7 +145,7 @@ func (lr Loginradius) PostPhoneResendVerificationOTPByToken(body interface{}, qu
 // Optional body parameters: other optional profile fields for your user
 // Required  parameter: sott
 
-func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string,body interface{}, queries ...interface{}) (*httprutils.Response, error) {
+func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string, body interface{}, queries ...interface{}) (*httprutils.Response, error) {
 	queryParams := map[string]string{}
 	for _, arg := range queries {
 		allowedQueries := map[string]bool{
@@ -162,6 +162,9 @@ func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string,body interface{
 	}
 	queryParams["apiKey"] = lr.Client.Context.ApiKey
 	request, err := lr.Client.NewPostReq("/identity/v2/auth/register", body, queryParams)
+	if err != nil {
+		return nil, err
+	}
 
 	request.Headers["X-LoginRadius-Sott"] = sott
 	response, err := lr.Client.HTTPRClient.Send(*request)

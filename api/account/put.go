@@ -25,7 +25,7 @@ func (lr Loginradius) PutManageAccountUpdateSecurityQuestionConfig(uid string, b
 	}
 	lr.Client.AddApiCredentialsToReqHeader(request)
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -47,7 +47,7 @@ func (lr Loginradius) PutManageAccountSetPassword(uid string, body interface{}) 
 	}
 	lr.Client.AddApiCredentialsToReqHeader(request)
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -69,7 +69,7 @@ func (lr Loginradius) PutManageAccountUpdate(uid string, body interface{}) (*htt
 	}
 	lr.Client.AddApiCredentialsToReqHeader(request)
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -99,6 +99,6 @@ func (lr Loginradius) PutManageAccountInvalidateVerificationEmail(uid string, qu
 	}
 
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

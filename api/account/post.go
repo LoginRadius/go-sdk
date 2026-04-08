@@ -26,7 +26,7 @@ func (lr Loginradius) PostManageAccountCreate(body interface{}) (*httprutils.Res
 
 	lr.Client.AddApiCredentialsToReqHeader(request)
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -63,7 +63,7 @@ func (lr Loginradius) PostManageForgotPasswordToken(body interface{}, queries ..
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -81,6 +81,6 @@ func (lr Loginradius) PostManageEmailVerificationToken(body interface{}) (*httpr
 		return nil, err
 	}
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

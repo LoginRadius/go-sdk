@@ -22,7 +22,7 @@ func (lr Loginradius) PostRolesCreate(body interface{}) (*httprutils.Response, e
 		return nil, err
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -34,7 +34,7 @@ func (lr Loginradius) PostRolesCreate(body interface{}) (*httprutils.Response, e
 func (lr Loginradius) DeleteAccountRole(role string) (*httprutils.Response, error) {
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/role/" + role)
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -46,7 +46,7 @@ func (lr Loginradius) DeleteAccountRole(role string) (*httprutils.Response, erro
 func (lr Loginradius) GetContextRolesPermissions(uid string) (*httprutils.Response, error) {
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/" + uid + "/rolecontext")
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -56,7 +56,7 @@ func (lr Loginradius) GetContextRolesPermissions(uid string) (*httprutils.Respon
 func (lr Loginradius) GetRolesList() (*httprutils.Response, error) {
 	req := lr.Client.NewGetReq("/identity/v2/manage/role")
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -68,7 +68,7 @@ func (lr Loginradius) GetRolesList() (*httprutils.Response, error) {
 func (lr Loginradius) GetRolesByUID(uid string) (*httprutils.Response, error) {
 	req := lr.Client.NewGetReq("/identity/v2/manage/account/" + uid + "/role")
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -88,7 +88,7 @@ func (lr Loginradius) PutAccountAddPermissionsToRole(role string, body interface
 		return nil, err
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -108,7 +108,7 @@ func (lr Loginradius) PutRolesAssignToUser(uid string, body interface{}) (*httpr
 		return nil, err
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -129,7 +129,7 @@ func (lr Loginradius) PutRolesUpsertContext(uid string, body interface{}) (*http
 	}
 	lr.Client.AddApiCredentialsToReqHeader(req)
 	fmt.Println(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -146,7 +146,7 @@ func (lr Loginradius) DeleteRolesAssignedToUser(uid string, body interface{}) (*
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/account/"+uid+"/role", body)
 	req.Headers = httprutils.JSONHeader
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -164,7 +164,7 @@ func (lr Loginradius) DeleteRolesAccountRemovePermissions(roleName string, body 
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/role/"+roleName+"/permission", body)
 	req.Headers = httprutils.JSONHeader
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -178,7 +178,7 @@ func (lr Loginradius) DeleteContextFromRole(uid, rolecontextname string) (*httpr
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/account/" + uid + "/rolecontext/" + rolecontextname)
 	req.Headers = httprutils.JSONHeader
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -194,7 +194,7 @@ func (lr Loginradius) DeleteRoleFromContext(uid, rolecontextname string, body in
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/account/"+uid+"/rolecontext/"+rolecontextname+"/role", body)
 	req.Headers = httprutils.JSONHeader
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -210,6 +210,6 @@ func (lr Loginradius) DeleteAdditionalPermissionFromContext(uid, rolecontextname
 	req := lr.Client.NewDeleteReq("/identity/v2/manage/account/"+uid+"/rolecontext/"+rolecontextname+"/additionalpermission", body)
 	req.Headers = httprutils.JSONHeader
 	lr.Client.AddApiCredentialsToReqHeader(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

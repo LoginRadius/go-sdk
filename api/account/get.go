@@ -20,7 +20,7 @@ func (lr Loginradius) GetManageAccountProfilesByEmail(queries interface{}) (*htt
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -39,7 +39,7 @@ func (lr Loginradius) GetManageAccountProfilesByUsername(queries interface{}) (*
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -58,7 +58,7 @@ func (lr Loginradius) GetManageAccountProfilesByPhoneID(queries interface{}) (*h
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -72,7 +72,7 @@ func (lr Loginradius) GetManageAccountProfilesByPhoneID(queries interface{}) (*h
 func (lr Loginradius) GetManageAccountProfilesByUid(uid string) (*httprutils.Response, error) {
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/" + uid)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -97,7 +97,7 @@ func (lr Loginradius) GetManageAccountIdentitiesByEmail(queries interface{}) (*h
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/identities", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -114,7 +114,7 @@ func (lr Loginradius) GetManageAccessTokenUID(queries interface{}) (*httprutils.
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/access_token", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -126,7 +126,7 @@ func (lr Loginradius) GetManageAccessTokenUID(queries interface{}) (*httprutils.
 func (lr Loginradius) GetManageAccountPassword(uid string) (*httprutils.Response, error) {
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/" + uid + "/password")
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -144,7 +144,7 @@ func (lr Loginradius) GetRefreshAccessTokenByRefreshToken(queries interface{}) (
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/access_token/refresh", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -162,7 +162,7 @@ func (lr Loginradius) GetRevokeRefreshToken(queries interface{}) (*httprutils.Re
 	}
 	request := lr.Client.NewGetReq("/identity/v2/manage/account/access_token/refresh/revoke", validatedQueries)
 	lr.Client.AddApiCredentialsToReqHeader(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 

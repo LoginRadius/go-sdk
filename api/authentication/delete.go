@@ -31,7 +31,7 @@ func (lr Loginradius) DeleteAuthDeleteAccountEmailConfirmation(queries ...interf
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -49,7 +49,7 @@ func (lr Loginradius) DeleteAuthRemoveEmail(body interface{}) (*httprutils.Respo
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -68,6 +68,6 @@ func (lr Loginradius) DeleteAuthUnlinkSocialIdentities(body interface{}) (*httpr
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*req)
+	response, err := lr.Client.HTTPRClient.Send(*req)
 	return response, err
 }

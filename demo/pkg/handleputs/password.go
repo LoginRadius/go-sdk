@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
 	account "github.com/LoginRadius/go-sdk/api/account"
 	lrauthentication "github.com/LoginRadius/go-sdk/api/authentication"
 	"github.com/LoginRadius/go-sdk/lrerror"
+	"github.com/julienschmidt/httprouter"
 )
 
 func ResetPassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -48,7 +48,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}
@@ -94,7 +94,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}
@@ -138,7 +138,7 @@ func SetPassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}

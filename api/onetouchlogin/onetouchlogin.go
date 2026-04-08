@@ -32,7 +32,7 @@ func (lr Loginradius) PostOneTouchLoginByEmail(body interface{}, queries ...inte
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -62,7 +62,7 @@ func (lr Loginradius) PostOneTouchLoginByPhone(body interface{}, queries ...inte
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -84,6 +84,6 @@ func (lr Loginradius) PutOneTouchOTPVerification(queries, body interface{}) (*ht
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

@@ -22,7 +22,7 @@ func (lr Loginradius) DeleteMFAResetGoogleAuthenticatorByToken() (*httprutils.Re
 	}
 	lr.Client.NormalizeApiKey(req)
 	req.Headers["content-Type"] = "application/json"
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -43,7 +43,7 @@ func (lr Loginradius) DeleteMFAResetSMSAuthenticatorByToken() (*httprutils.Respo
 	}
 	lr.Client.NormalizeApiKey(req)
 	req.Headers["content-Type"] = "application/json"
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -76,7 +76,7 @@ func (lr Loginradius) DeleteMFAResetSMSAuthenticatorByUid(queries interface{}) (
 	)
 	req.QueryParams = queryParams
 	req.Headers = httprutils.JSONHeader
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -109,6 +109,6 @@ func (lr Loginradius) DeleteMFAResetGoogleAuthenticatorByUid(queries interface{}
 	)
 	req.Headers = httprutils.JSONHeader
 	req.QueryParams = queryParams
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

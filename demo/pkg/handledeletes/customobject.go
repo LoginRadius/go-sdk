@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
 	"github.com/LoginRadius/go-sdk/api/customobject"
 	"github.com/LoginRadius/go-sdk/lrerror"
+	"github.com/julienschmidt/httprouter"
 )
 
 func CustomObject(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -43,7 +43,7 @@ func CustomObject(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}

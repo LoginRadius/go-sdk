@@ -14,7 +14,7 @@ func (lr Loginradius) DeleteManageAccount(uid string) (*httprutils.Response, err
 	lr.Client.AddApiCredentialsToReqHeader(request)
 	request.URL = request.URL + uid
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -39,6 +39,6 @@ func (lr Loginradius) DeleteManageAccountEmail(uid string, body interface{}) (*h
 		Body: encoded,
 	}
 	lr.Client.AddApiCredentialsToReqHeader(&request)
-	response, err := httprutils.TimeoutClient.Send(request)
+	response, err := lr.Client.HTTPRClient.Send(request)
 	return response, err
 }

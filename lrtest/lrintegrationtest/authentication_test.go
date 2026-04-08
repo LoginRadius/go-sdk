@@ -11,6 +11,7 @@ import (
 	lr "github.com/LoginRadius/go-sdk"
 	lraccount "github.com/LoginRadius/go-sdk/api/account"
 	lrauthentication "github.com/LoginRadius/go-sdk/api/authentication"
+	"github.com/LoginRadius/go-sdk/internal/sott"
 	lrbody "github.com/LoginRadius/go-sdk/lrbody"
 	"github.com/LoginRadius/go-sdk/lrerror"
 	"github.com/LoginRadius/go-sdk/lrjson"
@@ -38,11 +39,12 @@ func TestPostAuthUserRegistrationByEmail(t *testing.T) {
 
 	lrclient, _ := lr.NewLoginradius(&cfg)
 	loginradius := lrauthentication.Loginradius{lrclient}
+	sottToken := sott.Generate(lrclient.Context.ApiKey, lrclient.Context.ApiSecret, "10", "", "")
 
 	testEmail := "lrtest" + strconv.FormatInt(time.Now().Unix(), 10) + "@mailinator.com"
 	user := lrbody.RegistrationUser{}
 
-	res, err := lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(user)
+	res, err := lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(sottToken, user)
 	if err == nil || err.(lrerror.Error).Code() != "LoginradiusRespondedWithError" {
 		t.Errorf("PostAuthUserRegistrationByEmail Fail: Expected Error %v, instead received res: %+v, received error: %+v", "LoginradiusRespondedWithError", res, err)
 	}
@@ -57,12 +59,12 @@ func TestPostAuthUserRegistrationByEmail(t *testing.T) {
 		Password: "password",
 	}
 
-	res, err = lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(user)
+	res, err = lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(sottToken, user)
 	if res.StatusCode != 200 {
 		t.Errorf("PostAuthUserRegistrationByEmail Success: Expected StatusCode %v, received %v", 200, res)
 	}
 
-	res, err = lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(user)
+	res, err = lrauthentication.Loginradius(loginradius).PostAuthUserRegistrationByEmail(sottToken, user)
 	if err == nil || err.(lrerror.Error).Code() != "LoginradiusRespondedWithError" {
 		t.Errorf("PostAuthUserRegistrationByEmail Fail: Expected Error %v, instead received res: %+v, received error: %+v", "LoginradiusRespondedWithError", res, err)
 	}
@@ -774,9 +776,9 @@ func TestGetPasswordlessLoginByUsername(t *testing.T) {
 	}
 }
 
-//Comment out t.SkipNow() and manually set verificationtoken to run test
-//verificationtoken needs to be retrieved from email inbox after
-//calling GetPasswordlessLoginByEmail or ByUsername APIs
+// Comment out t.SkipNow() and manually set verificationtoken to run test
+// verificationtoken needs to be retrieved from email inbox after
+// calling GetPasswordlessLoginByEmail or ByUsername APIs
 func TestGetPasswordlessLoginVerification(t *testing.T) {
 	t.SkipNow()
 	SetTestEnv()

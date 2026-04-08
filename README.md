@@ -272,6 +272,25 @@ if err!= nil {
 }
 ```
 
+### Configuring the HTTP client
+
+`NewLoginradius` uses `httprutils.TimeoutClient` by default. To customize HTTP behavior such as timeouts, transport settings, proxies, or connection pooling, assign a custom `httprutils.Client` to `lrclient.HTTPRClient`:
+
+```go
+httpClient := &http.Client{
+  Timeout: 5 * time.Second,
+  Transport: &http.Transport{
+    MaxIdleConns:        100,
+    MaxConnsPerHost:     100,
+    MaxIdleConnsPerHost: 100,
+  },
+}
+
+lrclient.HTTPRClient = &httprutils.Client{
+  HTTPClient: httpClient,
+}
+```
+
 ### Handling the response
 
 The response returned from the previous code snippet will be a struct like so
@@ -3973,4 +3992,3 @@ if err != nil {
   // handle error
 }
 ```
-

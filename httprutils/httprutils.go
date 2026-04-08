@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -83,18 +84,35 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 }
 
 // BuildResponse builds the response struct.
-func BuildResponse(res *http.Response) (*Response, error) {
-	response := Response{}
+func BuildResponse(res *http.Response) (response *Response, err error) {
+	if res == nil || res.Body == nil {
+		err := lrerror.New("EncodingError", "Error reading the response body", errors.New("nil http response body"))
+		return nil, err
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			recoveredErr, ok := r.(error)
+			if !ok {
+				recoveredErr = fmt.Errorf("%v", r)
+			}
+			err = lrerror.New("EncodingError", "Error reading the response body", recoveredErr)
+			response = nil
+		}
+	}()
+	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		err := lrerror.New("EncodingError", "Error reading the response body", err)
 		return nil, err
 	}
 
+	response = &Response{}
 	if res.StatusCode < 200 || res.StatusCode > 299 {
 		err = lrerror.New("LoginradiusRespondedWithError", "Received error response from Loginradius", errors.New(string(body)))
 	} else {
-		response = Response{
+		response = &Response{
 			StatusCode: res.StatusCode,
 			Body:       string(body),
 			Headers:    res.Header,
@@ -102,8 +120,7 @@ func BuildResponse(res *http.Response) (*Response, error) {
 		}
 	}
 
-	res.Body.Close()
-	return &response, err
+	return response, err
 }
 
 func Send(request Request) (*Response, error) {
@@ -137,16 +154,15 @@ func (c *Client) Send(request Request) (*Response, error) {
 	return BuildResponse(res)
 }
 
-
 var tr = &http.Transport{
-	MaxIdleConns:       100,
-	MaxConnsPerHost:    100,
+	MaxIdleConns:        100,
+	MaxConnsPerHost:     100,
 	MaxIdleConnsPerHost: 100,
 }
 
 // Custom client with time out after 8 seconds
 var NetClient = &http.Client{
-	Timeout: time.Second * 8,
+	Timeout:   time.Second * 8,
 	Transport: tr,
 }
 

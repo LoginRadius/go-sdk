@@ -22,7 +22,7 @@ func (lr Loginradius) GetAccessTokenViaFacebook(queries interface{}) (*httprutil
 	req := lr.Client.NewGetReq("/api/v2/access_token/facebook", validatedQueries)
 
 	delete(req.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -40,7 +40,7 @@ func (lr Loginradius) GetAccessTokenViaTwitter(queries interface{}) (*httprutils
 	req := lr.Client.NewGetReq("/api/v2/access_token/twitter", validatedQueries)
 
 	delete(req.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -58,7 +58,7 @@ func (lr Loginradius) GetAccessTokenViaVkontakte(queries interface{}) (*httpruti
 	req := lr.Client.NewGetReq("/api/v2/access_token/vkontakte", validatedQueries)
 
 	delete(req.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -78,7 +78,7 @@ func (lr Loginradius) GetRefreshUserProfile() (*httprutils.Response, error) {
 
 	req := lr.Client.NewGetReq("/api/v2/userprofile/refresh")
 	req.QueryParams = map[string]string{"access_token": lr.Client.Context.Token}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -115,7 +115,7 @@ func (lr Loginradius) GetRefreshToken(queries ...interface{}) (*httprutils.Respo
 
 	req := lr.Client.NewGetReq("/api/v2/access_token/refresh", queryParams)
 	delete(req.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 

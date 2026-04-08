@@ -29,7 +29,7 @@ func (lr Loginradius) PostMFAEmailLogin(body interface{}, queries ...interface{}
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -57,7 +57,7 @@ func (lr Loginradius) PostMFAUsernameLogin(body interface{}, queries ...interfac
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -85,6 +85,6 @@ func (lr Loginradius) PostMFAPhoneLogin(body interface{}, queries ...interface{}
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

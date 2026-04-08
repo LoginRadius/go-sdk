@@ -34,7 +34,7 @@ func (lr Loginradius) PutAuthVerifyEmailByOtp(body interface{}, queries ...inter
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -56,7 +56,7 @@ func (lr Loginradius) PutAuthChangePassword(body interface{}) (*httprutils.Respo
 		return nil, err
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -74,7 +74,7 @@ func (lr Loginradius) PutAuthLinkSocialIdentities(token string, body interface{}
 		return nil, err
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -108,7 +108,7 @@ func (lr Loginradius) PutResendEmailVerification(body interface{}, queries ...in
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -130,7 +130,7 @@ func (lr Loginradius) PutAuthResetPasswordByResetToken(body interface{}) (*httpr
 		return nil, err
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -167,7 +167,7 @@ func (lr Loginradius) PutAuthResetPasswordByOTP(body interface{}, queries ...int
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -187,7 +187,7 @@ func (lr Loginradius) PutAuthResetPasswordByOTP(body interface{}, queries ...int
 // []byte could also be passed as body
 func (lr Loginradius) PutAuthResetPasswordBySecurityAnswerAndEmail(body interface{}) (*httprutils.Response, error) {
 	request, err := lr.Client.NewPutReq("/identity/v2/auth/password/securityanswer", body)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -207,7 +207,7 @@ func (lr Loginradius) PutAuthResetPasswordBySecurityAnswerAndEmail(body interfac
 // []byte could also be passed as body
 func (lr Loginradius) PutAuthResetPasswordBySecurityAnswerAndPhone(body interface{}) (*httprutils.Response, error) {
 	request, err := lr.Client.NewPutReq("/identity/v2/auth/password/securityanswer", body)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -227,7 +227,7 @@ func (lr Loginradius) PutAuthResetPasswordBySecurityAnswerAndPhone(body interfac
 // []byte could also be passed as body
 func (lr Loginradius) PutAuthResetPasswordBySecurityAnswerAndUsername(body interface{}) (*httprutils.Response, error) {
 	request, err := lr.Client.NewPutReq("/identity/v2/auth/password/securityanswer", body)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -245,7 +245,7 @@ func (lr Loginradius) PutAuthSetOrChangeUsername(body interface{}) (*httprutils.
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -279,7 +279,7 @@ func (lr Loginradius) PutAuthUpdateProfileByToken(body interface{}, queries ...i
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -298,6 +298,6 @@ func (lr Loginradius) PutAuthUpdateSecurityQuestionByAccessToken(body interface{
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

@@ -1,6 +1,9 @@
 
 > **LoginRadius  Golang  SDK Change Log** provides information regarding what has changed, more specifically what changes, improvements and bug fix has been made to the SDK. For more details please refer to the [LoginRadius API Documention](https://www.loginradius.com/docs/libraries/sdk-libraries/golang-library/)
 
+# Version 11.5.0
+- Add configurable HTTP client to Loginradius struct
+
 # Version 11.4.0
 -  We have introduced connection pooling in the Go Default Http client to keep fewer connections open and it will support more requests with minimal server resources.
 - Enhancement in README.md file.

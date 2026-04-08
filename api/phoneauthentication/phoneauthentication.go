@@ -34,7 +34,7 @@ func (lr Loginradius) PostPhoneLogin(body interface{}, queries ...interface{}) (
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -64,7 +64,7 @@ func (lr Loginradius) PostPhoneForgotPasswordByOTP(body interface{}, queries ...
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -96,7 +96,7 @@ func (lr Loginradius) PostPhoneResendVerificationOTP(body interface{}, queries .
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -128,7 +128,7 @@ func (lr Loginradius) PostPhoneResendVerificationOTPByToken(body interface{}, qu
 		}
 	}
 
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -145,7 +145,7 @@ func (lr Loginradius) PostPhoneResendVerificationOTPByToken(body interface{}, qu
 // Optional body parameters: other optional profile fields for your user
 // Required  parameter: sott
 
-func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string,body interface{}, queries ...interface{}) (*httprutils.Response, error) {
+func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string, body interface{}, queries ...interface{}) (*httprutils.Response, error) {
 	queryParams := map[string]string{}
 	for _, arg := range queries {
 		allowedQueries := map[string]bool{
@@ -162,9 +162,12 @@ func (lr Loginradius) PostPhoneUserRegistrationBySMS(sott string,body interface{
 	}
 	queryParams["apiKey"] = lr.Client.Context.ApiKey
 	request, err := lr.Client.NewPostReq("/identity/v2/auth/register", body, queryParams)
+	if err != nil {
+		return nil, err
+	}
 
 	request.Headers["X-LoginRadius-Sott"] = sott
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -186,7 +189,7 @@ func (lr Loginradius) GetPhoneSendOTP(queries interface{}) (*httprutils.Response
 	validatedQueries["apikey"] = lr.Client.Context.ApiKey
 	request := lr.Client.NewGetReq("/identity/v2/auth/login/passwordlesslogin/otp", validatedQueries)
 	delete(request.QueryParams, "apiKey")
-	res, err := httprutils.TimeoutClient.Send(*request)
+	res, err := lr.Client.HTTPRClient.Send(*request)
 	return res, err
 }
 
@@ -203,7 +206,7 @@ func (lr Loginradius) GetPhoneNumberAvailability(queries interface{}) (*httpruti
 	}
 	req := lr.Client.NewGetReq("/identity/v2/auth/phone", validatedQueries)
 	lr.Client.NormalizeApiKey(req)
-	resp, err := httprutils.TimeoutClient.Send(*req)
+	resp, err := lr.Client.HTTPRClient.Send(*req)
 	return resp, err
 }
 
@@ -232,7 +235,7 @@ func (lr Loginradius) PutPhoneLoginUsingOTP(body interface{}, queries ...interfa
 		}
 	}
 	lr.Client.NormalizeApiKey(request)
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -263,7 +266,7 @@ func (lr Loginradius) PutPhoneNumberUpdate(body interface{}, queries ...interfac
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -281,7 +284,7 @@ func (lr Loginradius) PutPhoneResetPasswordByOTP(body interface{}) (*httprutils.
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -307,7 +310,7 @@ func (lr Loginradius) PutPhoneVerificationByOTP(queries, body interface{}) (*htt
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -336,7 +339,7 @@ func (lr Loginradius) PutPhoneVerificationByOTPByToken(queries interface{}) (*ht
 	}
 	lr.Client.NormalizeApiKey(req)
 
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -355,7 +358,7 @@ func (lr Loginradius) PutResetPhoneIDVerification(uid string) (*httprutils.Respo
 		"apisecret": lr.Client.Context.ApiSecret,
 	}
 	req.Headers = httprutils.URLEncodedHeader
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -369,6 +372,6 @@ func (lr Loginradius) DeleteRemovePhoneIDByAccessToken() (*httprutils.Response, 
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

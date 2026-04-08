@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/julienschmidt/httprouter"
 	lr "github.com/LoginRadius/go-sdk"
 	"github.com/LoginRadius/go-sdk/api/mfa"
 	"github.com/LoginRadius/go-sdk/lrerror"
+	"github.com/julienschmidt/httprouter"
 )
 
 func MfaGoogleAuth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -46,7 +46,7 @@ func MfaGoogleAuth(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}
@@ -87,7 +87,7 @@ func MfaGoogleEnable(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respCode)
 	if errors != "" {
-		log.Printf(errors)
+		log.Print(errors)
 		w.Write([]byte(errors))
 		return
 	}

@@ -4,6 +4,7 @@ package loginradius
 import (
 	"errors"
 
+	"github.com/LoginRadius/go-sdk/httprutils"
 	"github.com/LoginRadius/go-sdk/lrerror"
 )
 
@@ -13,8 +14,9 @@ const domain = "https://api.loginradius.com"
 // Loginradius struct holds context for intializing the Loginradius client and the domain for API calls
 // Domain can be changed after intialization
 type Loginradius struct {
-	Context *Context
-	Domain  string
+	Context     *Context
+	Domain      string
+	HTTPRClient *httprutils.Client
 }
 
 // Config struct contains Loginradius credentials and is used when initalizing the Loginradius API client struct
@@ -65,7 +67,8 @@ func NewLoginradius(cfg *Config, optionalArgs ...map[string]string) (*Loginradiu
 	}
 
 	return &Loginradius{
-		Context: &ctx,
-		Domain:  domain,
+		Context:     &ctx,
+		Domain:      domain,
+		HTTPRClient: httprutils.TimeoutClient,
 	}, nil
 }

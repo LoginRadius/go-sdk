@@ -9,6 +9,7 @@ import (
 	lr "github.com/LoginRadius/go-sdk"
 	lraccount "github.com/LoginRadius/go-sdk/api/account"
 	"github.com/LoginRadius/go-sdk/api/phoneauthentication"
+	"github.com/LoginRadius/go-sdk/internal/sott"
 	"github.com/LoginRadius/go-sdk/lrerror"
 	lrjson "github.com/LoginRadius/go-sdk/lrjson"
 )
@@ -111,11 +112,12 @@ func TestPostPhoneUserRegistrationBySMS(t *testing.T) {
 
 	lrclient, _ := lr.NewLoginradius(&cfg)
 	loginradius := phoneauthentication.Loginradius{lrclient}
+	sottToken := sott.Generate(lrclient.Context.ApiKey, lrclient.Context.ApiSecret, "10", "", "")
 
 	testEmail := "lrtest" + strconv.FormatInt(time.Now().Unix(), 10) + "@mailinator.com"
 	user := User{}
 
-	res, err := phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(user)
+	res, err := phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(sottToken, user)
 	if err == nil || err.(lrerror.Error).Code() != "LoginradiusRespondedWithError" {
 		t.Errorf("PostPhoneUserRegistrationBySMS Fail: Expected Error %v, instead received res: %+v, received error: %+v", "LoginradiusRespondedWithError", res, err)
 	}
@@ -130,12 +132,12 @@ func TestPostPhoneUserRegistrationBySMS(t *testing.T) {
 		Password: "password",
 	}
 
-	res, err = phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(user)
+	res, err = phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(sottToken, user)
 	if res.StatusCode != 200 {
 		t.Errorf("PostPhoneUserRegistrationBySMS Success: Expected StatusCode %v, received %v", 200, res)
 	}
 
-	res, err = phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(user)
+	res, err = phoneauthentication.Loginradius(loginradius).PostPhoneUserRegistrationBySMS(sottToken, user)
 	if err == nil || err.(lrerror.Error).Code() != "LoginradiusRespondedWithError" {
 		t.Errorf("PostPhoneUserRegistrationBySMS Fail: Expected Error %v, instead received res: %+v, received error: %+v", "LoginradiusRespondedWithError", res, err)
 	}

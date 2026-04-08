@@ -42,7 +42,7 @@ func (lr Loginradius) PostSocialMessageAPI(queries interface{}) (*httprutils.Res
 
 	request.Headers = httprutils.URLEncodedHeader
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -77,6 +77,6 @@ func (lr Loginradius) PostSocialStatusPost(queries interface{}) (*httprutils.Res
 
 	request.Headers = httprutils.URLEncodedHeader
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

@@ -30,7 +30,7 @@ func (lr Loginradius) PutMFAValidateGoogleAuthCode(queries, body interface{}) (*
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -59,7 +59,7 @@ func (lr Loginradius) PutMFAValidateOTP(queries, body interface{}) (*httprutils.
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -92,7 +92,7 @@ func (lr Loginradius) PutMFAUpdateByToken(body interface{}, queries ...interface
 		}
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -119,7 +119,7 @@ func (lr Loginradius) PutMFAUpdatePhoneNumber(queries, body interface{}) (*httpr
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -153,7 +153,7 @@ func (lr Loginradius) PutMFAUpdatePhoneNumberByToken(body interface{}, queries .
 	}
 
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -178,7 +178,7 @@ func (lr Loginradius) PutMFAValidateBackupCode(queries interface{}, body interfa
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -195,7 +195,7 @@ func (lr Loginradius) PutMFAReauthenticateByGoogleAuthenticator(body interface{}
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -209,7 +209,7 @@ func (lr Loginradius) PutMFAReauthenticateByBackupCode(body interface{}) (*httpr
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -228,7 +228,7 @@ func (lr Loginradius) PutMFAReauthenticateByOTP(body interface{}) (*httprutils.R
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -247,7 +247,7 @@ func (lr Loginradius) PutMFAReauthenticateByPassword(body interface{}) (*httprut
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -266,6 +266,6 @@ func (lr Loginradius) PutMFAUpdateSettings(body interface{}) (*httprutils.Respon
 		return nil, err
 	}
 	lr.Client.NormalizeApiKey(req)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

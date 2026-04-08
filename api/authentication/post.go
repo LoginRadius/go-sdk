@@ -34,7 +34,7 @@ func (lr Loginradius) PostAuthAddEmail(body interface{}, queries ...interface{})
 		}
 	}
 
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -61,7 +61,7 @@ func (lr Loginradius) PostAuthForgotPassword(body interface{}, queries interface
 	if err != nil {
 		return nil, err
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -72,8 +72,7 @@ func (lr Loginradius) PostAuthForgotPassword(body interface{}, queries interface
 // Required post parameter: email - array(Check docs for more info); password: string
 // Required  parameter: sott
 // Pass data in struct lrbody.RegistrationUser as body to help ensure parameters satisfy API requirements
-func (lr Loginradius) PostAuthUserRegistrationByEmail(sott string,body interface{}, queries ...interface{}) (*httprutils.Response, error) {
-	
+func (lr Loginradius) PostAuthUserRegistrationByEmail(sott string, body interface{}, queries ...interface{}) (*httprutils.Response, error) {
 	queryParams := map[string]string{}
 	for _, arg := range queries {
 		allowedQueries := map[string]bool{
@@ -90,9 +89,12 @@ func (lr Loginradius) PostAuthUserRegistrationByEmail(sott string,body interface
 	}
 	queryParams["apiKey"] = lr.Client.Context.ApiKey
 	request, err := lr.Client.NewPostReq("/identity/v2/auth/register", body, queryParams)
+	if err != nil {
+		return nil, err
+	}
 
 	request.Headers["X-LoginRadius-Sott"] = sott
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -121,7 +123,7 @@ func (lr Loginradius) PostAuthLoginByEmail(body interface{}, queries ...interfac
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }
 
@@ -148,6 +150,6 @@ func (lr Loginradius) PostAuthLoginByUsername(body interface{}, queries ...inter
 			request.QueryParams[k] = v
 		}
 	}
-	response, err := httprutils.TimeoutClient.Send(*request)
+	response, err := lr.Client.HTTPRClient.Send(*request)
 	return response, err
 }

@@ -24,7 +24,7 @@ func (lr Loginradius) GetAuthVerifyEmail(queries interface{}) (*httprutils.Respo
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 
 	req := lr.Client.NewGetReq("/identity/v2/auth/email", validatedQueries)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -42,7 +42,7 @@ func (lr Loginradius) GetAuthCheckEmailAvailability(queries interface{}) (*httpr
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 
 	req := lr.Client.NewGetReq("/identity/v2/auth/email", validatedQueries)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -61,7 +61,7 @@ func (lr Loginradius) GetAuthCheckUsernameAvailability(queries interface{}) (*ht
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 
 	req := lr.Client.NewGetReq("/identity/v2/auth/username", validatedQueries)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -75,7 +75,7 @@ func (lr Loginradius) GetAuthReadProfilesByToken() (*httprutils.Response, error)
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -87,7 +87,7 @@ func (lr Loginradius) GetAuthPrivatePolicyAccept() (*httprutils.Response, error)
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -112,7 +112,7 @@ func (lr Loginradius) GetAuthSendWelcomeEmail(queries ...interface{}) (*httpruti
 		}
 	}
 
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -127,7 +127,7 @@ func (lr Loginradius) GetAuthSocialIdentity() (*httprutils.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -142,7 +142,7 @@ func (lr Loginradius) GetAuthValidateAccessToken() (*httprutils.Response, error)
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -159,7 +159,7 @@ func (lr Loginradius) GetAuthDeleteAccount(queries interface{}) (*httprutils.Res
 	}
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 	req := lr.Client.NewGetReq("/identity/v2/auth/account/delete", validatedQueries)
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -173,7 +173,7 @@ func (lr Loginradius) GetAuthInvalidateAccessToken() (*httprutils.Response, erro
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -189,7 +189,7 @@ func (lr Loginradius) GetAuthSecurityQuestionByAccessToken() (*httprutils.Respon
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -211,7 +211,7 @@ func (lr Loginradius) GetAuthSecurityQuestionByEmail(queries interface{}) (*http
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -233,7 +233,7 @@ func (lr Loginradius) GetAuthSecurityQuestionByUsername(queries interface{}) (*h
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -255,7 +255,7 @@ func (lr Loginradius) GetAuthSecurityQuestionByPhone(queries interface{}) (*http
 	if err != nil {
 		return nil, err
 	}
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -276,7 +276,7 @@ func (lr Loginradius) GetPasswordlessLoginByEmail(queries interface{}) (*httprut
 
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/passwordlesslogin/email", validatedQueries)
 
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -296,7 +296,7 @@ func (lr Loginradius) GetPasswordlessLoginByUsername(queries interface{}) (*http
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/passwordlesslogin/email", validatedQueries)
 
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }
 
@@ -316,6 +316,6 @@ func (lr Loginradius) GetPasswordlessLoginVerification(queries interface{}) (*ht
 	validatedQueries["apiKey"] = lr.Client.Context.ApiKey
 	req := lr.Client.NewGetReq("/identity/v2/auth/login/passwordlesslogin/email/verify", validatedQueries)
 
-	res, err := httprutils.TimeoutClient.Send(*req)
+	res, err := lr.Client.HTTPRClient.Send(*req)
 	return res, err
 }

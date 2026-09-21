@@ -31,8 +31,8 @@ a real `.env` — it is gitignored for a reason.
 
 ## Endpoints
 
-The route table is **generated** from `demo.routes` in the factory's
-the shared SDK manifest, so every LoginRadius SDK's demo exposes the same contract.
+The route table is **generated** from the shared SDK manifest, so every
+LoginRadius SDK's demo exposes the same contract.
 It is not hand-maintained here, and it cannot drift from the handlers: a route
 with no handler fails to compile.
 
@@ -79,7 +79,7 @@ half-authenticated user never holds anything the session middleware accepts.
 ### Routes that need extra configuration
 
 - **Custom objects are currently disabled.** The four `/api/customobject`
-  routes are commented out in the factory's the shared SDK manifest pending a tenant
+  routes are commented out in the shared SDK manifest pending a tenant
   with a custom-object schema configured. The handlers and UI panel are
   commented out alongside them and carry a `CUSTOM-OBJECTS-DISABLED` marker;
   restore all three together.
@@ -143,7 +143,7 @@ Real LoginRadius responses carry tenant-specific extras (`Uid`, `IsActive`,
 `IsDeleted`, …) that neither branch declares, so strict decoding rejects
 the whole payload with `data failed to match schemas in oneOf(…)`.
 
-The factory's post-generate hook patches `newStrictDecoder` so
+The SDK generator patches `newStrictDecoder` so
 `DisallowUnknownFields` is disabled. The re-marshal `{}` check that each branch
 performs (drop the branch if the decoded struct round-trips to an empty object)
 remains the discriminator — it's the actual signal of which branch matched. The

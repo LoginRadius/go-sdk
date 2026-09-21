@@ -141,8 +141,8 @@ func remapJSON(src any, dst any) error {
 
 // handleIndex serves the single-page demo UI.
 // handleIndex serves the demo's static assets: index.html at "/", and anything
-// else under static/ by name — demo.css among them, which is rendered from the
-// factory's shared template so every SDK's demo looks the same.
+// else under static/ by name — demo.css among them, which is generated from a
+// template shared by every LoginRadius SDK so the demos look the same.
 //
 // Serving the whole embedded directory rather than just index.html: a page that
 // links a stylesheet the server will not hand out renders unstyled, and it does

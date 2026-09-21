@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	loginradius "github.com/LoginRadius/go-sdk/v12"
 )
@@ -93,7 +94,14 @@ func main() {
 	}
 
 	addr := envOr("LR_DEMO_ADDR", ":8080")
-	log.Printf("demo listening on %s — browse http://localhost%s/", addr, addr)
+	// addr may already carry a host (LR_DEMO_ADDR=127.0.0.1:8099), and prefixing
+	// "localhost" then produced http://localhost127.0.0.1:8099/ — the one line a
+	// reader copies out of the log.
+	browse := addr
+	if strings.HasPrefix(browse, ":") {
+		browse = "localhost" + browse
+	}
+	log.Printf("demo listening on %s — browse http://%s/", addr, browse)
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatal(err)
 	}

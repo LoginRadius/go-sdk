@@ -1,35 +1,43 @@
+# v12 changelog
 
-> **LoginRadius  Golang  SDK Change Log** provides information regarding what has changed, more specifically what changes, improvements and bug fix has been made to the SDK. For more details please refer to the [LoginRadius API Documention](https://www.loginradius.com/docs/libraries/sdk-libraries/golang-library/)
+## v12.0.0-rc.1
 
-# Version 11.5.0
-- Add configurable HTTP client to Loginradius struct
+Initial v12 release. v12 is a new module path (`github.com/LoginRadius/go-sdk/v12`) — v11 customers are not affected.
 
-# Version 11.4.0
--  We have introduced connection pooling in the Go Default Http client to keep fewer connections open and it will support more requests with minimal server resources.
-- Enhancement in README.md file.
+### What's new
 
-## Added new multiple APIs for better user experience
-- GetRevokeRefreshToken
-- GetRefreshAccessTokenByRefreshToken
+- **Generated from the OpenAPI spec.** Every operation defined in
+  `LoginRadius-Public-APIs.yaml` is reachable through a typed service on the
+  `Client` (392 operations across 57 services).
+- **Typed request and response models.** ~1,500 schemas are accessible as Go
+  structs through top-level aliases — no need to construct request bodies via
+  `interface{}` and JSON marshaling.
+- **Centralized authentication.** Nine credentials are injected via a single
+  `http.RoundTripper`; configure them once at `NewClient`. The spec declares 12
+  security schemes: `Digest` and `XRequestExpiresTime` are produced by
+  `WithAPIRequestSigning` rather than configured as static credentials, and
+  `ApiSecret` (the `secret=` query parameter, distinct from `apisecret=`) is
+  not sent. API key and secret are sent via the `X-LoginRadius-ApiKey` /
+  `X-LoginRadius-ApiSecret` headers by preference (keeping them out of access
+  logs and URL caches); the query-string scheme is also populated to support
+  the ~56 endpoints in the spec that only accept it.
+- **Typed errors.** `*loginradius.Error` exposes HTTP status, LoginRadius
+  error code, message, and raw body, plus helpers (`IsAuth`, `IsRateLimit`,
+  `IsServer`).
+- **Custom HTTP client support.** `WithHTTPClient` preserves caller's
+  Transport, dialer, and TLS config under the SDK's auth/UA RoundTripper.
+- **Server selection.** `WithDomain`, `WithCustomDomain`, `WithBaseURL`.
 
-## Breaking Changes
+### Migrating from v11
 
-For developers migrating from v11.3.0, there will be some minor breaking changes in terms of SDK implementation as mentioned below.
+See [README — Migrating from v11](./README.md#migrating-from-v11).
 
-- In this version, we have added additional param `timeDifference`, `startTime` and `endTime` into manual SOTT generate method `Generate()`.
+### Spec changes that landed with this release
 
-- We have standardize `PostAuthUserRegistrationByEmail` and `PostPhoneUserRegistrationBySMS` Api and now SOTT will be passed explicity as an function parameter.
+Three operationId case-collisions in the source spec were corrected:
 
+- `validateAccessToken` (Session tag) → `ValidateSessionAccessToken`
+- `getAccessToken` (Session tag) → `GetSessionAccessToken`
+- `createTenantRole` (Organization tag) → `CreateOrgTenantRole`
 
-
-
-# Version 11.3.0
-- Added Contribution Guideline file.
-- Updated jquery version 3.3.1 with latest version 3.6.0
-
-# Version 11.3.0-beta
-- Added ``Licence.md`` file
-
-
-
-See the documentation [here](https://www.loginradius.com/docs/libraries/sdk-libraries/golang-library/)
+PascalCase variants under other tags kept their original operationIds.

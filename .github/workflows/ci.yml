@@ -1,0 +1,116 @@
+# GENERATED FILE — do not edit it in this repository.
+# This workflow is produced alongside the rest of this SDK and is overwritten
+# whenever the SDK is regenerated. Raise changes where the SDK is generated.
+#
+# These steps mirror this SDK's own build verification, so CI cannot go green
+# on a tree that verification would reject, or the reverse.
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sdk:
+    name: SDK (Go 1.24)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          # The module's declared floor (see go.mod) — not "whatever is newest".
+          # Testing above the floor never discovers that the floor is broken for
+          # a customer still on it.
+          go-version: '1.24'
+          cache-dependency-path: go.sum
+
+      # `-diff` rather than a plain `go mod tidy`: in CI an untidy
+      # go.mod must FAIL, not be quietly fixed so the rest of the run tests a
+      # tree the repository does not actually contain.
+      - name: go.mod is tidy
+        run: go mod tidy -diff
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race ./...
+
+  demo:
+    # demo/ is a SEPARATE module (demo/go.mod, with a replace back to the root),
+    # so none of the `./...` above reaches it. Without this job demo/routes_test.go
+    # stops running — and that file holds the guard proving a session cookie
+    # cannot satisfy an mfaToken route. A security guard that silently stops
+    # running is worse than one that was never written.
+    name: Demo module (Go 1.24)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: demo/go.sum
+
+      - name: go.mod is tidy
+        working-directory: demo
+        run: go mod tidy -diff
+
+      - name: Build
+        working-directory: demo
+        run: go build ./...
+
+      - name: Vet
+        working-directory: demo
+        run: go vet ./...
+
+      - name: Test
+        working-directory: demo
+        run: go test -race ./...
+
+  vulncheck:
+    # The jwt dependency is pinned for a reason (GHSA-mh63-6h87-95cp — excessive
+    # allocation parsing an untrusted JWT header, which is exactly what this SDK
+    # does). govulncheck is what notices when the next such advisory lands.
+    #
+    # ADVISORY, not a gate, and deliberately so. Most of what it reports is the
+    # Go STANDARD LIBRARY of whichever toolchain the runner has — findings this
+    # SDK cannot fix and which are red on every toolchain tried, including the
+    # newest. Gating on that makes CI permanently red, and a permanently red
+    # check is one nobody reads. The signal worth having is a DEPENDENCY
+    # advisory, which shows in the log and the uploaded report.
+    #
+    # Run on 'stable' rather than the module's floor: pinning the scan to the
+    # oldest supported toolchain reports every stdlib issue fixed since, which
+    # is noise about the runner, not about this SDK.
+    name: govulncheck (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Scan
+        run: govulncheck ./... | tee govulncheck.txt
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: govulncheck
+          path: govulncheck.txt
+          if-no-files-found: warn

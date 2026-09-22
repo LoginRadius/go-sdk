@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>LoginRadius Go SDK — v12 demo</title>
+<link rel="stylesheet" href="demo.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <!-- Page chrome shared with the Java, .NET and PHP demos: a full-bleed
+         <header> over a centred <main>. The stylesheet keys the layout off
+         exactly this shape (body:has(header) steps out of the way so the
+         header spans the viewport), so all five demos frame their content
+         identically even though the controls inside legitimately differ. -->
+    <header>
+      <div>
+        <h1>LoginRadius Go SDK</h1>
+        <p>Sample integration of the v12 Go SDK against a real LoginRadius tenant.</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="warning">
+        Demo only — cookies are unsigned, no CSRF protection, in-memory session store. Do not copy into production.
+      </div>
+
+      <!-- Populated by JS when the page is loaded with ?verify=... in the
+           URL. That's how the email-verification handler hands the result
+           back to the index page. -->
+      <div class="result" id="page-banner"></div>
+
+      <!-- ── Register ──────────────────────────────────────────────────── -->
+      <form onsubmit="onRegister(event)">
+        <h2>Register</h2>
+        <p class="hint">The SOTT is minted server-side per request; the browser never sees the API secret.</p>
+        <label>Email <input type="email" name="email" required /></label>
+        <label>Password <input type="password" name="password" required minlength="8" /></label>
+        <label>First name <input type="text" name="firstName" /></label>
+        <label>Last name <input type="text" name="lastName" /></label>
+        <button type="submit">Register</button>
+        <div class="result" id="register-result"></div>
+      </form>
+
+      <!-- ── Login ─────────────────────────────────────────────────────── -->
+      <form onsubmit="onLogin(event)">
+        <h2>Log in</h2>
+        <label>Email <input type="email" name="email" required /></label>
+        <label>Password <input type="password" name="password" required /></label>
+        <button type="submit">Log in</button>
+        <div class="result" id="login-result"></div>
+      </form>
+
+      <!-- ── Passwordless login ────────────────────────────────────────── -->
+      <fieldset id="passwordless">
+        <legend>Passwordless login</legend>
+        <p class="hint">
+          No password: a one-time code is emailed or texted to an existing
+          user, then verified here to start a session. A tenant with MFA
+          enabled still enforces its second factor afterward, same as Log in
+          above.
+        </p>
+        <label>Email <input type="email" id="pwl-email" /></label>
+        <button onclick="pwlSendEmail()">Email me a code</button>
+        <label>Email code <input type="text" id="pwl-email-otp" autocomplete="one-time-code" /></label>
+        <button onclick="pwlVerifyEmail()">Verify email code</button>
+        <label>Phone <input type="text" id="pwl-phone" placeholder="+15551234567" /></label>
+        <button class="secondary" onclick="pwlSendPhone()">Text me a code</button>
+        <label>SMS code <input type="text" id="pwl-phone-otp" autocomplete="one-time-code" /></label>
+        <button class="secondary" onclick="pwlVerifyPhone()">Verify SMS code</button>
+        <div class="result" id="pwl-result"></div>
+      </fieldset>
+
+      <fieldset id="mfa-challenge" hidden>
+        <legend>Second factor required</legend>
+        <p class="hint">
+          The login returned a challenge. Its token is held in a separate
+          short-lived cookie — a session cookie will not open these routes.
+        </p>
+        <div class="row">
+          <button class="secondary" onclick="mfaSendEmailOtp()">Email me an OTP</button>
+        </div>
+        <label>Email OTP <input type="text" id="mfa-email-otp" autocomplete="one-time-code" /></label>
+        <label>Email address <input type="email" id="mfa-email-addr" /></label>
+        <button onclick="mfaVerifyEmail()">Verify email OTP</button>
+        <label>Authenticator code <input type="text" id="mfa-login-totp" autocomplete="one-time-code" /></label>
+        <button onclick="mfaVerifyTotp()">Verify TOTP</button>
+        <div class="result" id="mfa-challenge-result"></div>
+      </fieldset>
+
+      <!-- ── Passkey ───────────────────────────────────────────────────── -->
+      <fieldset>
+        <legend>Register a passkey</legend>
+        <p class="hint">
+          WebAuthn needs a secure context. <code>http://localhost</code> counts,
+          so this works as shipped; over plain HTTP on any other host the
+          browser will refuse. The same applies to logging in below.
+        </p>
+        <label>Identifier (email) <input type="email" id="pk-reg-id" /></label>
+        <button onclick="passkeyRegister()">Create passkey</button>
+        <div class="result" id="pk-reg-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Log in with a passkey</legend>
+        <label>Identifier (email) <input type="email" id="pk-login-id" /></label>
+        <button onclick="passkeyLogin()">Use passkey</button>
+        <div class="result" id="pk-login-result"></div>
+      </fieldset>
+
+      <!-- ── Password ──────────────────────────────────────────────────── -->
+      <fieldset>
+        <legend>Forgot password (email link)</legend>
+        <label>Email <input type="email" id="fp-email" /></label>
+        <button onclick="call('POST', '/api/password/forgot', { email: val('fp-email') }, 'fp-result', 'Reset email sent.')">Send reset email</button>
+        <div class="result" id="fp-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Reset with token</legend>
+        <label>Reset token <input type="text" id="rp-token" /></label>
+        <label>New password <input type="password" id="rp-pass" /></label>
+        <button onclick="call('POST', '/api/password/reset', { resetToken: val('rp-token'), password: val('rp-pass') }, 'rp-result', 'Password reset.')">Reset password</button>
+        <div class="result" id="rp-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Reset with OTP (SMS)</legend>
+        <label>Phone <input type="text" id="ro-phone" /></label>
+        <button class="secondary" onclick="call('POST', '/api/password/otp', { phone: val('ro-phone') }, 'ro-result', 'OTP sent.')">Send OTP</button>
+        <label>OTP <input type="text" id="ro-otp" autocomplete="one-time-code" /></label>
+        <label>New password <input type="password" id="ro-pass" /></label>
+        <button onclick="call('PUT', '/api/password/otp', { phone: val('ro-phone'), otp: val('ro-otp'), password: val('ro-pass') }, 'ro-result', 'Password reset.')">Reset with OTP</button>
+        <div class="result" id="ro-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Change password (signed in)</legend>
+        <label>Current password <input type="password" id="cp-old" /></label>
+        <label>New password <input type="password" id="cp-new" /></label>
+        <button onclick="call('POST', '/api/password/change', { oldPassword: val('cp-old'), newPassword: val('cp-new') }, 'cp-result', 'Password changed.')">Change password</button>
+        <div class="result" id="cp-result"></div>
+      </fieldset>
+
+      <!-- ── Profile ───────────────────────────────────────────────────── -->
+      <fieldset id="section-profile">
+        <legend>Profile</legend>
+        <div class="row">
+          <button onclick="loadProfile()">Load profile</button>
+          <button class="secondary" onclick="call('POST', '/api/auth/logout', {}, 'profile-result', 'Signed out.')">Log out</button>
+        </div>
+        <div class="result" id="profile-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Update profile</legend>
+        <label>First name <input type="text" id="up-first" /></label>
+        <label>Last name <input type="text" id="up-last" /></label>
+        <label>About <input type="text" id="up-about" /></label>
+        <button onclick="call('POST', '/api/profile/update', { firstName: val('up-first'), lastName: val('up-last'), about: val('up-about') }, 'up-result', 'Profile updated.')">Save changes</button>
+        <div class="result" id="up-result"></div>
+      </fieldset>
+
+      <!-- ── Identifiers ───────────────────────────────────────────────── -->
+      <fieldset>
+        <legend>Add email</legend>
+        <label>Email <input type="email" id="ae-email" /></label>
+        <label>Type <input type="text" id="ae-type" placeholder="Secondary" /></label>
+        <button onclick="call('POST', '/api/email/add', { email: val('ae-email'), type: val('ae-type') }, 'ae-result', 'Verification sent.')">Add email</button>
+        <div class="result" id="ae-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Delete email</legend>
+        <label>Email <input type="email" id="de-email" /></label>
+        <button onclick="call('DELETE', '/api/email', { email: val('de-email') }, 'de-result', 'Email removed.')">Delete email</button>
+        <div class="result" id="de-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Update phone</legend>
+        <label>Phone <input type="text" id="ph-phone" /></label>
+        <button onclick="call('PUT', '/api/phone', { phone: val('ph-phone') }, 'ph-result', 'Verification OTP sent.')">Update phone</button>
+        <div class="result" id="ph-result"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Delete account</legend>
+        <p class="hint">
+          The demo refuses any address other than the one you are signed in as.
+          The underlying API is admin-scoped and would delete any account in the tenant.
+        </p>
+        <label>Confirm your email <input type="email" id="da-email" /></label>
+        <button onclick="call('DELETE', '/api/account', { email: val('da-email') }, 'da-result', 'Account deleted.')">Delete my account</button>
+        <div class="result" id="da-result"></div>
+      </fieldset>
+
+      <!-- ── Custom objects ────────────────────────────────────────────── -->
+      <p class="hint">
+        Needs a custom-object schema configured in the tenant and named in
+        <code>LR_CUSTOM_OBJECT_NAME</code>. Without it these routes report
+        which variable is missing rather than failing upstream.
+      </p>
+      <fieldset>
+        <legend>Create</legend>
+        <label>JSON payload <textarea id="co-create">{ "favouriteColour": "blue" }</textarea></label>
+        <button onclick="callObj('POST', '/api/customobject', 'co-create', 'co-result', 'Object created.')">Create</button>
+      </fieldset>
+      <fieldset>
+        <legend>List</legend>
+        <button onclick="callGet('/api/customobject', 'co-result', 'Loaded.')">List objects</button>
+      </fieldset>
+      <fieldset>
+        <legend>Update / delete by record id</legend>
+        <label>Record id <input type="text" id="co-id" required /></label>
+        <label>JSON payload <textarea id="co-update">{ "favouriteColour": "green" }</textarea></label>
+        <div class="row">
+          <button onclick="updateCustomObject()">Update</button>
+          <button class="secondary" onclick="deleteCustomObjectById()">Delete</button>
+        </div>
+      </fieldset>
+      <div class="result" id="co-result"></div>
+
+      <!-- ── Tokens ────────────────────────────────────────────────────── -->
+      <fieldset>
+        <legend>Token lifecycle</legend>
+        <p class="hint">
+        Refresh uses the <code>/manage/</code> operation. The native variant
+        takes the access token as a query parameter, which would put a bearer
+        credential into access and proxy logs.
+      </p>
+      <div class="row">
+        <button onclick="call('POST', '/api/token/refresh', {}, 'tok-result', 'Access token refreshed.')">Refresh</button>
+        <button class="secondary" onclick="callGet('/api/token/validate', 'tok-result', 'Token is valid.')">Validate</button>
+        <button class="secondary" onclick="callGet('/api/token/session', 'tok-result', 'Loaded active sessions.')">Active session</button>
+      </div>
+      <div class="result" id="tok-result"></div>
+      </fieldset>
+
+      <!-- ── MFA ───────────────────────────────────────────────────────── -->
+      <fieldset>
+        <legend>Settings</legend>
+        <label>Duo redirect URI <input type="text" id="mfa-duo" placeholder="https://example.com/duo/callback" /></label>
+        <p class="hint">
+          Optional. Where Duo returns the user after its challenge — only
+          needed if this tenant has Duo configured. Left blank, the parameter
+          is omitted entirely rather than sent empty.
+        </p>
+        <div class="row">
+          <button onclick="callGet('/api/mfa/settings' + duoQuery(), 'mfa-result', 'Loaded MFA settings.')">Load settings</button>
+          <button class="secondary" onclick="callGet('/api/mfa/backupcodes', 'mfa-result', 'Backup codes issued.')">Generate backup codes</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Enrol an authenticator</legend>
+        <p class="hint">Scan the QR code the login challenge returned, then confirm a code here.</p>
+        <label>Authenticator code <input type="text" id="mfa-totp" autocomplete="one-time-code" /></label>
+        <button onclick="call('PUT', '/api/mfa/totp', { totp: val('mfa-totp') }, 'mfa-result', 'Authenticator enrolled.')">Enrol TOTP</button>
+      </fieldset>
+      <div class="result" id="mfa-result"></div>
+    </main>
+
+    <script>
+      // ---- navigation -----------------------------------------------------
+      // The page is one flat list of cards, the same shape as the Java, .NET
+      // and PHP demos, so "take me to my profile after signing in" is a scroll
+      // rather than a tab switch. Nothing is hidden, so there is nothing to
+      // reveal first.
+      function showProfile() {
+        document
+          .getElementById('section-profile')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      const val = (id) => document.getElementById(id).value.trim();
+      const enc = encodeURIComponent;
+
+      // showResult paints a coloured banner in the form's result area.
+      //   kind:   'muted' (in-flight) | 'success' | 'error'
+      //   title:  one-line summary shown bold
+      //   detail: optional object/string rendered as JSON underneath
+      function showResult(id, kind, title, detail) {
+        const out = document.getElementById(id);
+        out.className = 'result show ' + (kind || '');
+        out.replaceChildren();
+        const t = document.createElement('div');
+        t.className = 'result-title';
+        t.textContent = title;
+        out.appendChild(t);
+        if (detail !== undefined && detail !== null && detail !== '') {
+          const d = document.createElement('pre');
+          d.className = 'result-detail';
+          d.textContent =
+            typeof detail === 'string' ? detail : JSON.stringify(detail, null, 2);
+          out.appendChild(d);
+        }
+      }
+
+      async function request(method, url, body) {
+        const init = { method, headers: {} };
+        if (body !== null && body !== undefined) {
+          init.headers['Content-Type'] = 'application/json';
+          init.body = JSON.stringify(body);
+        }
+        const res = await fetch(url, init);
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); } catch (_) { data = { raw: text }; }
+        return { ok: res.ok, status: res.status, data };
+      }
+
+      // Pull a human-readable message out of the server's error JSON. The Go
+      // demo surfaces the SDK's *loginradius.Error via writeSDKError, which
+      // populates {error, code, description, status_code}. Demo-side refusals
+      // add a {hint}.
+      function errorMessage(data, fallback) {
+        if (!data) return fallback;
+        const base = data.description || data.error || data.raw || fallback;
+        return data.hint ? base + ' — ' + data.hint : base;
+      }
+
+      // call/callGet/callObj are the three shapes every panel needs. Keeping
+      // them generic is what lets one page cover the whole contract without a
+      // bespoke handler per route.
+      async function call(method, url, body, resultId, successTitle) {
+        showResult(resultId, 'muted', 'Contacting LoginRadius…');
+        const { ok, status, data } = await request(method, url, body);
+        if (!ok) {
+          const code = data.code ? ` (code ${data.code})` : '';
+          showResult(resultId, 'error', `Request failed${code}`,
+            errorMessage(data, `HTTP ${status}`));
+          return null;
+        }
+        showResult(resultId, 'success', successTitle, data);
+        return data;
+      }
+
+      const callGet = (url, resultId, successTitle) =>
+        call('GET', url, null, resultId, successTitle);
+
+      // callObj sends the contents of a <textarea> as a JSON object, reporting
+      // a parse failure locally rather than posting something malformed.
+      async function callObj(method, url, textareaId, resultId, successTitle) {
+        let parsed;
+        try {
+          parsed = JSON.parse(val(textareaId));
+        } catch (e) {
+          showResult(resultId, 'error', 'That is not valid JSON', String(e.message));
+          return;
+        }
+        return call(method, url, { data: parsed }, resultId, successTitle);
+      }
+
+      // Guards update/delete against a blank record id — without this, an
+      // empty val('co-id') builds a path with nothing after the trailing
+      // slash, which 404s as "Cannot PUT/DELETE /api/customobject/" instead
+      // of a clear message.
+      function updateCustomObject() {
+        const id = val('co-id');
+        if (!id) { showResult('co-result', 'error', 'Record id is required to update.'); return; }
+        return callObj('PUT', '/api/customobject/' + enc(id), 'co-update', 'co-result', 'Object updated.');
+      }
+
+      function deleteCustomObjectById() {
+        const id = val('co-id');
+        if (!id) { showResult('co-result', 'error', 'Record id is required to delete.'); return; }
+        return call('DELETE', '/api/customobject/' + enc(id), null, 'co-result', 'Object deleted.');
+      }
+
+      // ---- login, including the MFA branch --------------------------------
+      async function onLogin(event) {
+        event.preventDefault();
+        const body = Object.fromEntries(new FormData(event.target));
+        showResult('login-result', 'muted', 'Contacting LoginRadius…');
+        const { ok, status, data } = await request('POST', '/api/auth/login', body);
+        if (!ok) {
+          const code = data.code ? ` (code ${data.code})` : '';
+          showResult('login-result', 'error', `Login failed${code}`,
+            errorMessage(data, `HTTP ${status}`));
+          return;
+        }
+        if (data.mfa_required) {
+          // The challenge token is already in its own cookie; reveal the panel
+          // that completes it rather than dead-ending here.
+          document.getElementById('mfa-challenge').hidden = false;
+          document.getElementById('mfa-email-addr').value = body.email || '';
+          showResult('login-result', 'muted',
+            'Second factor required — complete the challenge below.',
+            data.totp_enrolled ? 'An authenticator is enrolled on this account.' : data.response);
+          return;
+        }
+        showResult('login-result', 'success', 'Logged in.');
+        showProfile();
+        loadProfile();
+      }
+
+      async function onRegister(event) {
+        event.preventDefault();
+        const body = Object.fromEntries(new FormData(event.target));
+        const data = await call('POST', '/api/auth/register', body, 'register-result', 'Registered.');
+        if (data && data.signed_in) {
+          showProfile();
+          loadProfile();
+        } else if (data) {
+          showResult('register-result', 'success',
+            'Registered — check your email to verify before signing in.', data.profile);
+        }
+      }
+
+      const loadProfile = () => callGet('/api/profile', 'profile-result', 'Profile loaded.');
+
+      // Builds ?duoRedirectUri=... only when the field has a value, so the
+      // request carries no empty parameter.
+      const duoQuery = () => {
+        const v = val('mfa-duo');
+        return v ? '?duoRedirectUri=' + enc(v) : '';
+      };
+
+      // ---- Passwordless login ----------------------------------------------
+      const pwlSendEmail = () =>
+        callGet('/api/auth/passwordless/email?email=' + enc(val('pwl-email')), 'pwl-result', 'Code sent.');
+
+      async function pwlVerifyEmail() {
+        const data = await call('POST', '/api/auth/passwordless/email/verify',
+          { email: val('pwl-email'), otp: val('pwl-email-otp') }, 'pwl-result', 'Signed in.');
+        if (data && data.mfa_required) {
+          document.getElementById('mfa-challenge').hidden = false;
+          document.getElementById('mfa-email-addr').value = val('pwl-email');
+          return;
+        }
+        if (data) { showProfile(); loadProfile(); }
+      }
+
+      const pwlSendPhone = () =>
+        callGet('/api/auth/passwordless/phone?phone=' + enc(val('pwl-phone')), 'pwl-result', 'Code sent.');
+
+      async function pwlVerifyPhone() {
+        const data = await call('PUT', '/api/auth/passwordless/phone/verify',
+          { phone: val('pwl-phone'), otp: val('pwl-phone-otp') }, 'pwl-result', 'Signed in.');
+        if (data && data.mfa_required) {
+          document.getElementById('mfa-challenge').hidden = false;
+          return;
+        }
+        if (data) { showProfile(); loadProfile(); }
+      }
+
+      // ---- MFA login challenge --------------------------------------------
+      const mfaSendEmailOtp = () =>
+        call('POST', '/api/mfa/login/email', { email: val('mfa-email-addr') },
+          'mfa-challenge-result', 'OTP sent.');
+
+      async function mfaVerifyEmail() {
+        const data = await call('PUT', '/api/mfa/login/email',
+          { email: val('mfa-email-addr'), otp: val('mfa-email-otp') },
+          'mfa-challenge-result', 'Signed in.');
+        if (data) afterChallenge();
+      }
+
+      async function mfaVerifyTotp() {
+        const data = await call('PUT', '/api/mfa/login/totp',
+          { totp: val('mfa-login-totp') }, 'mfa-challenge-result', 'Signed in.');
+        if (data) afterChallenge();
+      }
+
+      function afterChallenge() {
+        document.getElementById('mfa-challenge').hidden = true;
+        showProfile();
+        loadProfile();
+      }
+
+      // ---- WebAuthn --------------------------------------------------------
+      // The API speaks standard WebAuthn: challenges arrive base64url-encoded
+      // and credentials must go back the same way. These four helpers are the
+      // whole of the encoding work.
+      const b64urlToBytes = (s) => {
+        const pad = s.replace(/-/g, '+').replace(/_/g, '/');
+        const bin = atob(pad + '='.repeat((4 - (pad.length % 4)) % 4));
+        return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      };
+      const bytesToB64url = (buf) =>
+        btoa(String.fromCharCode(...new Uint8Array(buf)))
+          .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+      // The server hands back the options object verbatim; only the binary
+      // fields need decoding before the browser will accept it.
+      function decodeCreationOptions(publicKey) {
+        const out = { ...publicKey };
+        out.challenge = b64urlToBytes(publicKey.challenge);
+        out.user = { ...publicKey.user, id: b64urlToBytes(publicKey.user.id) };
+        if (publicKey.excludeCredentials) {
+          out.excludeCredentials = publicKey.excludeCredentials.map((c) => ({
+            ...c, id: b64urlToBytes(c.id),
+          }));
+        }
+        return out;
+      }
+
+      function decodeRequestOptions(publicKey) {
+        const out = { ...publicKey };
+        out.challenge = b64urlToBytes(publicKey.challenge);
+        if (publicKey.allowCredentials) {
+          out.allowCredentials = publicKey.allowCredentials.map((c) => ({
+            ...c, id: b64urlToBytes(c.id),
+          }));
+        }
+        return out;
+      }
+
+      async function passkeyRegister() {
+        const id = val('pk-reg-id');
+        if (!id) { showResult('pk-reg-result', 'error', 'Enter an identifier first.'); return; }
+        showResult('pk-reg-result', 'muted', 'Requesting a challenge…');
+        const begin = await request('GET', '/api/passkey/register/begin?identifier=' + enc(id));
+        if (!begin.ok) {
+          showResult('pk-reg-result', 'error', 'Could not start enrolment',
+            errorMessage(begin.data, `HTTP ${begin.status}`));
+          return;
+        }
+        const publicKey = begin.data?.RegisterBeginCredential?.publicKey;
+        if (!publicKey) {
+          showResult('pk-reg-result', 'error', 'No WebAuthn options returned', begin.data);
+          return;
+        }
+        let credential;
+        try {
+          showResult('pk-reg-result', 'muted', 'Waiting for your authenticator…');
+          credential = await navigator.credentials.create({
+            publicKey: decodeCreationOptions(publicKey),
+          });
+        } catch (e) {
+          // A user who cancels the prompt lands here; so does a non-secure
+          // context. Both are worth saying plainly.
+          showResult('pk-reg-result', 'error', 'Authenticator did not produce a credential', String(e.message || e));
+          return;
+        }
+        const data = await call('POST', '/api/passkey/register/finish',
+          { credential: serializeAttestation(credential), email: id },
+          'pk-reg-result', 'Passkey registered.');
+        if (data && data.signed_in) { showProfile(); loadProfile(); }
+      }
+
+      async function passkeyLogin() {
+        const id = val('pk-login-id');
+        if (!id) { showResult('pk-login-result', 'error', 'Enter an identifier first.'); return; }
+        showResult('pk-login-result', 'muted', 'Requesting a challenge…');
+        const begin = await request('GET', '/api/passkey/login/begin?identifier=' + enc(id));
+        if (!begin.ok) {
+          showResult('pk-login-result', 'error', 'Could not start login',
+            errorMessage(begin.data, `HTTP ${begin.status}`));
+          return;
+        }
+        const publicKey = begin.data?.LoginBeginCredential?.publicKey;
+        if (!publicKey) {
+          showResult('pk-login-result', 'error', 'No WebAuthn options returned', begin.data);
+          return;
+        }
+        let assertion;
+        try {
+          showResult('pk-login-result', 'muted', 'Waiting for your authenticator…');
+          assertion = await navigator.credentials.get({
+            publicKey: decodeRequestOptions(publicKey),
+          });
+        } catch (e) {
+          showResult('pk-login-result', 'error', 'Authenticator did not produce an assertion', String(e.message || e));
+          return;
+        }
+        const data = await call('POST', '/api/passkey/login/finish',
+          { credential: serializeAssertion(assertion), email: id },
+          'pk-login-result', 'Signed in with passkey.');
+        if (data) { showProfile(); loadProfile(); }
+      }
+
+      function serializeAttestation(c) {
+        return {
+          id: c.id,
+          rawId: bytesToB64url(c.rawId),
+          type: c.type,
+          authenticatorAttachment: c.authenticatorAttachment || undefined,
+          clientExtensionResults: c.getClientExtensionResults(),
+          response: {
+            clientDataJSON: bytesToB64url(c.response.clientDataJSON),
+            attestationObject: bytesToB64url(c.response.attestationObject),
+          },
+        };
+      }
+
+      function serializeAssertion(c) {
+        return {
+          id: c.id,
+          rawId: bytesToB64url(c.rawId),
+          type: c.type,
+          authenticatorAttachment: c.authenticatorAttachment || undefined,
+          response: {
+            clientDataJSON: bytesToB64url(c.response.clientDataJSON),
+            authenticatorData: bytesToB64url(c.response.authenticatorData),
+            signature: bytesToB64url(c.response.signature),
+            userHandle: c.response.userHandle ? bytesToB64url(c.response.userHandle) : null,
+          },
+        };
+      }
+
+      // ---- email-verification banner ---------------------------------------
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const state = params.get('verify');
+        if (!state) return;
+        if (state === 'success') {
+          showResult('page-banner', 'success', 'Email verified. You can log in now.');
+        } else if (state === 'missing') {
+          showResult('page-banner', 'error', 'That verification link carried no token.');
+        } else {
+          showResult('page-banner', 'error', 'Verification failed',
+            params.get('message') || '');
+        }
+      })();
+    </script>
+  </body>
+</html>

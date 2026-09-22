@@ -1,3 +1,46 @@
-./demo
-secret.env 
-**/._.DS_Store
+# Secrets — never commit real credentials.
+#
+# `.env` must be matched at EVERY depth, not just demo/: .env.example tells the
+# reader to copy it to either the module root or demo/, and a root-only or
+# demo-only pattern silently leaves the other one committable. The negation
+# re-includes the templates, which are generated and carry no real values.
+.env
+*.env
+# Also .env.local, .env.staging, and anything else suffixed after .env —
+# these hold real values too. Negations come last so they win.
+.env.*
+!*.env.example
+!.env.example
+
+# macOS
+.DS_Store
+._*
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Go build output.
+# `go build ./...` in a main package drops an executable named after its
+# directory, with no extension — *.exe and *.test do not catch it.
+*.exe
+*.test
+*.out
+/demo/demo
+
+*.log
+
+# The generator's per-model markdown is superseded by pkg.go.dev now that
+# openapi/ is a public package, so it stays out of the repo — and therefore out
+# of the module zip, which Go builds from the VCS tree.
+#
+# docs/* rather than docs/: git cannot re-include a file whose parent DIRECTORY
+# is excluded, so excluding the contents is what makes the negation below work.
+docs/*
+# API.md and apis/ are ours, not the generator's, and carry the one thing
+# pkg.go.dev cannot: which HTTP endpoint each method calls, with its parameters.
+# Re-including the directory is enough — `docs/*` matches only direct children,
+# so nothing excludes the files inside it.
+!docs/API.md
+!docs/apis/

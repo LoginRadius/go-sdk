@@ -1,0 +1,108 @@
+# GENERATED FILE — do not edit it in this repository.
+# This workflow is produced alongside the rest of this SDK and is overwritten
+# whenever the SDK is regenerated. Raise changes where the SDK is generated.
+#
+# Go has no registry to push to: a module is published by the existence of a
+# tag, and proxy.golang.org fetches it on first request. So this workflow does
+# not "publish" — it re-runs the gate, warms the proxy so the first `go get`
+# after a release is not the thing that discovers a bad tag, and records the
+# GitHub Release.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (e.g. v12.0.0-rc.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Requires a human approval on the 'release' environment before anything
+    # public happens. Configure required reviewers on it — without them the
+    # environment is a label, not a gate.
+    environment: release
+    permissions:
+      contents: write   # create the GitHub Release
+    steps:
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.name }}
+          fetch-depth: 0
+
+      # The tag and the SDK version are two independent facts until something
+      # compares them. A module tagged v12.0.1 whose version.go still says
+      # 12.0.0-rc.1 ships a wrong User-Agent to every customer and cannot be
+      # un-published — the proxy caches tags immutably.
+      - name: Tag matches the SDK version
+        run: |
+          expected='v12.0.0-rc.1'
+          actual='${{ steps.tag.outputs.name }}'
+          if [ "${actual}" != "${expected}" ]; then
+            echo "::error::tag ${actual} does not match the generated SDK version ${expected}"
+            exit 1
+          fi
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      # Fetching through the public proxy is the only check that the tag is
+      # actually resolvable as a module — a wrong major-version suffix in
+      # go.mod, for instance, builds fine locally and fails every `go get`.
+      - name: Warm the module proxy
+        env:
+          GOFLAGS: -mod=mod
+          GOPROXY: proxy.golang.org
+        run: |
+          cd "$(mktemp -d)"
+          go mod init warmup
+          go get 'github.com/LoginRadius/go-sdk/v12@${{ steps.tag.outputs.name }}'
+          go list -m 'github.com/LoginRadius/go-sdk/v12@${{ steps.tag.outputs.name }}'
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          # --verify-tag: never create a release for a tag that does not exist.
+          # -F: the changelog is the release note; it is generated with the SDK.
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "release ${TAG} already exists — nothing to do"
+            exit 0
+          fi
+          # A quoted empty PRERELEASE would be passed to gh as an empty
+          # argument, so it is expanded unquoted and deliberately left empty
+          # for a stable release.
+          PRERELEASE='--prerelease'
+          # --verify-tag: never invent a release for a tag that does not exist.
+          gh release create "${TAG}" --verify-tag --title "${TAG}" \
+            --notes-file CHANGELOG.md ${PRERELEASE}
